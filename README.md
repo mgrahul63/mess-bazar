@@ -24,7 +24,7 @@ Everything is calculated **automatically**. No spreadsheet needed.
 
 ## 🖥️ Live Demo
 
-👉 **[https://your-live-demo-link.vercel.app](https://mess-bazar.vercel.app/)**
+👉 **[https://mess-bazar.vercel.app/](https://mess-bazar.vercel.app/)**
 
 ---
 
