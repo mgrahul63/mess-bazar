@@ -24,47 +24,50 @@ Everything is calculated **automatically**. No spreadsheet needed.
 
 ## 🖥️ Live Demo
 
-👉 **[https://your-live-demo-link.vercel.app](https://your-live-demo-link.vercel.app)**
-
-> Replace this link with your actual deployed URL after hosting.
+👉 **[https://your-live-demo-link.vercel.app](https://mess-bazar.vercel.app/)**
 
 ---
 
 ## ✨ Features
 
-| Feature | Description |
-|--------|-------------|
-| 👥 Member Management | Add, edit, remove members with cash deposits and roles |
-| 🛒 Bazar List | Log every purchase with type (Manager or Member) |
-| 🍽️ Meal Chart | Enter daily meals per person for the full month (Day 1–30) |
-| 📦 Fixed Costs | Track shared costs like rent, electricity, water separately |
-| 💰 Auto Settlement | Automatically calculates who pays and who receives |
-| 💾 Auto Save | Data saves to browser storage instantly |
-| ⬇️ Export Backup | Download your data as a JSON file anytime |
-| ⬆️ Import Data | Restore data from any previous backup file |
-| 🔒 Month Reset | Close the month, auto-backup, and start fresh |
+| Feature              | Description                                                 |
+| -------------------- | ----------------------------------------------------------- |
+| 👥 Member Management | Add, edit, remove members with cash deposits and roles      |
+| 🛒 Bazar List        | Log every purchase with type (Manager or Member)            |
+| 🍽️ Meal Chart        | Enter daily meals per person for the full month (Day 1–30)  |
+| 📦 Fixed Costs       | Track shared costs like rent, electricity, water separately |
+| 💰 Auto Settlement   | Automatically calculates who pays and who receives          |
+| 💾 Auto Save         | Data saves to browser storage instantly                     |
+| ⬇️ Export Backup     | Download your data as a JSON file anytime                   |
+| ⬆️ Import Data       | Restore data from any previous backup file                  |
+| 🔒 Month Reset       | Close the month, auto-backup, and start fresh               |
 
 ---
 
 ## 📊 How the Calculation Works
 
 ### Step 1 — Meal Rate
+
 ```
 Bazar Total ÷ Total Meals = Meal Rate per meal
 ```
 
 ### Step 2 — Fixed Cost Per Person
+
 ```
 Total Fixed Cost ÷ Number of Members = Fixed Cost Per Person
 ```
+
 > ⚠️ Fixed costs are kept **separate** from the Bazar Total so they do not affect the meal rate.
 
 ### Step 3 — Each Member's Total Expense
+
 ```
 (Meal Rate × Their Meals) + Fixed Cost Per Person = Total Expense
 ```
 
 ### Step 4 — Final Balance
+
 ```
 (Cash Deposit + Member Bazar Purchases) − Total Expense = Final Balance
 ```
@@ -76,10 +79,10 @@ Total Fixed Cost ÷ Number of Members = Fixed Cost Per Person
 
 ## 🛒 Bazar Purchase Types Explained
 
-| Type | Used in Meal Rate | Added to Member Deposit |
-|------|:-----------------:|:-----------------------:|
-| **Manager Purchase** | ✅ Yes | ❌ No |
-| **Member Purchase** | ✅ Yes | ✅ Yes |
+| Type                 | Used in Meal Rate | Added to Member Deposit |
+| -------------------- | :---------------: | :---------------------: |
+| **Manager Purchase** |      ✅ Yes       |          ❌ No          |
+| **Member Purchase**  |      ✅ Yes       |         ✅ Yes          |
 
 - **Manager Purchase** → The manager buys for the whole group. This goes into the bazar total for meal rate calculation only.
 - **Member Purchase** → A member buys something and it counts as their personal deposit in the final settlement.
@@ -90,11 +93,11 @@ Total Fixed Cost ÷ Number of Members = Fixed Cost Per Person
 
 Mess Bazar uses **browser localStorage** — your data never leaves your device.
 
-| Method | How it works |
-|--------|-------------|
-| Auto Save | Every entry is saved instantly in the background |
-| Export | Click **Export** to download a `.json` backup file |
-| Import | Click **Import** to load data from a backup file |
+| Method      | How it works                                                 |
+| ----------- | ------------------------------------------------------------ |
+| Auto Save   | Every entry is saved instantly in the background             |
+| Export      | Click **Export** to download a `.json` backup file           |
+| Import      | Click **Import** to load data from a backup file             |
 | Month Reset | Click **Close Month & Reset** to auto-backup and start fresh |
 
 ---
@@ -102,6 +105,7 @@ Mess Bazar uses **browser localStorage** — your data never leaves your device.
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js 16 or higher
 - npm or yarn
 
@@ -109,7 +113,7 @@ Mess Bazar uses **browser localStorage** — your data never leaves your device.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/mess-bazar.git
+git clone https://github.com/mgrahul63//mess-bazar.git
 
 # Go into the project folder
 cd mess-bazar
