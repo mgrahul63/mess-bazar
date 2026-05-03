@@ -1,4 +1,4 @@
-import { C, font, InfoBox, SectionTitle } from "./UI";
+import { InfoBox, SectionTitle } from "./UI";
 
 export default function MealTab({ data, update }) {
   const days = data.daysInMonth || 30;
@@ -16,12 +16,29 @@ export default function MealTab({ data, update }) {
       (s, v) => s + Number(v || 0),
       0,
     );
+
   const getDayTotal = (day) =>
     data.members.reduce(
       (s, m) => s + Number((data.mealChart[m.id] || {})[day] || 0),
       0,
     );
+
   const grandTotal = data.members.reduce((s, m) => s + getMemberTotal(m.id), 0);
+
+  if (data.members.length === 0) {
+    return (
+      <div>
+        <SectionTitle
+          icon="🍽️"
+          title="Table 3 — Meal Chart"
+          sub="Enter number of meals per person per day."
+        />
+        <div className="card text-center text-gray-500 text-sm py-10">
+          Please add members first in the Members tab.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -30,219 +47,139 @@ export default function MealTab({ data, update }) {
         title="Table 3 — Meal Chart"
         sub="Enter number of meals per person per day. Use 0, 1, 2, 0.5 etc."
       />
+
       <InfoBox color="teal">
         Grand Total Meals:{" "}
-        <strong style={{ fontSize: 15 }}>{grandTotal.toFixed(1)}</strong>
-        &nbsp;&nbsp;|&nbsp;&nbsp;Meal Rate = Bazar Total ÷ Grand Total Meals
+        <strong className="text-base">{grandTotal.toFixed(1)}</strong>
+        &nbsp;|&nbsp; Meal Rate = Bazar Total ÷ Grand Total Meals
       </InfoBox>
-      {data.members.length === 0 ? (
-        <div
-          style={{
-            background: C.surface,
-            border: `1px solid ${C.border}`,
-            borderRadius: 10,
-            padding: 40,
-            textAlign: "center",
-            color: C.textLight,
-            fontSize: 14,
-          }}
-        >
-          Please add members first in the Members tab.
-        </div>
-      ) : (
-        <div
-          style={{
-            overflowX: "auto",
-            borderRadius: 10,
-            border: `1px solid ${C.border}`,
-          }}
-        >
-          <table
-            style={{
-              borderCollapse: "collapse",
-              fontSize: 13,
-              fontFamily: font,
-              width: "100%",
-            }}
-          >
-            <thead>
-              <tr style={{ background: C.header }}>
-                <th style={stickyTh}>Member Name</th>
-                {Array.from({ length: days }, (_, i) => (
-                  <th key={i + 1} style={dayTh}>
+
+      {/* ── MOBILE: member cards with day inputs ────────────────────────────── */}
+      <div className="sm:hidden flex flex-col gap-4">
+        {data.members.map((m) => (
+          <div key={m.id} className="card">
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex items-center gap-2">
+                <strong className="text-gray-100">{m.name}</strong>
+                {m.isManager && (
+                  <span className="text-[10px] bg-teal-bg text-teal-primary border border-teal-border px-2 py-0.5 rounded-full font-bold">
+                    MGR
+                  </span>
+                )}
+              </div>
+              <span className="text-teal-primary font-bold text-base">
+                {getMemberTotal(m.id).toFixed(1)} meals
+              </span>
+            </div>
+            {/* Days grid — 6 per row on mobile */}
+            <div className="grid grid-cols-6 gap-1.5">
+              {Array.from({ length: days }, (_, i) => (
+                <div key={i + 1} className="flex flex-col items-center gap-0.5">
+                  <span className="text-[9px] text-gray-600 font-medium">
                     {i + 1}
-                  </th>
-                ))}
-                <th style={{ ...dayTh, color: C.teal, background: C.tealBg }}>
-                  Total
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.members.map((m, ri) => (
-                <tr
-                  key={m.id}
-                  style={{
-                    background: ri % 2 === 0 ? C.surface : C.surfaceAlt,
-                  }}
-                >
-                  <td
-                    style={{
-                      ...stickyTd,
-                      background: ri % 2 === 0 ? C.surface : C.surfaceAlt,
-                    }}
-                  >
-                    <span style={{ fontWeight: 600, color: C.text }}>
-                      {m.name}
-                    </span>
-                    {m.isManager && (
-                      <span
-                        style={{
-                          marginLeft: 6,
-                          fontSize: 10,
-                          background: C.tealBg,
-                          color: C.teal,
-                          padding: "1px 6px",
-                          borderRadius: 10,
-                          fontWeight: 700,
-                          border: `1px solid #1e5050`,
-                        }}
-                      >
-                        MGR
-                      </span>
-                    )}
-                  </td>
-                  {Array.from({ length: days }, (_, i) => (
-                    <td
-                      key={i + 1}
-                      style={{
-                        padding: "3px 2px",
-                        textAlign: "center",
-                        borderBottom: `1px solid ${C.border}`,
-                      }}
-                    >
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.5"
-                        value={(data.mealChart[m.id] || {})[i + 1] ?? ""}
-                        onChange={(e) => setMeal(m.id, i + 1, e.target.value)}
-                        style={mealInput}
-                      />
-                    </td>
-                  ))}
-                  <td
-                    style={{
-                      padding: "6px 12px",
-                      textAlign: "center",
-                      fontWeight: 700,
-                      color: C.teal,
-                      background: C.tealBg,
-                      borderBottom: `1px solid ${C.border}`,
-                    }}
-                  >
-                    {getMemberTotal(m.id).toFixed(1)}
-                  </td>
-                </tr>
+                  </span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.5"
+                    value={(data.mealChart[m.id] || {})[i + 1] ?? ""}
+                    onChange={(e) => setMeal(m.id, i + 1, e.target.value)}
+                    className="w-full text-center text-xs bg-dark-raised border border-dark-border rounded focus:outline-none focus:border-teal-primary text-gray-100 py-1 px-0"
+                  />
+                </div>
               ))}
-            </tbody>
-            <tfoot>
-              <tr style={{ background: C.header }}>
-                <td
-                  style={{
-                    ...stickyTd,
-                    background: C.header,
-                    color: C.textLight,
-                    fontSize: 11,
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: 0.5,
-                  }}
+            </div>
+          </div>
+        ))}
+
+        {/* Grand total card */}
+        <div className="card flex justify-between items-center">
+          <span className="text-sm font-semibold text-gray-400">
+            Grand Total Meals
+          </span>
+          <span className="text-teal-primary font-bold text-xl">
+            {grandTotal.toFixed(1)}
+          </span>
+        </div>
+      </div>
+
+      {/* ── DESKTOP: scrollable table ────────────────────────────────────────── */}
+      <div className="hidden sm:block overflow-x-auto rounded-xl border border-dark-border">
+        <table className="border-collapse text-xs w-full min-w-max">
+          <thead>
+            <tr className="bg-dark-header">
+              <th className="px-3 py-2 text-left text-[10px] font-bold text-gray-500 uppercase tracking-wide border-b border-dark-border border-r sticky left-0 bg-dark-header z-10 min-w-[110px]">
+                Member
+              </th>
+              {Array.from({ length: days }, (_, i) => (
+                <th
+                  key={i + 1}
+                  className="px-1 py-2 text-center text-[10px] font-bold text-gray-500 border-b border-dark-border min-w-[38px]"
                 >
-                  Day Total
+                  {i + 1}
+                </th>
+              ))}
+              <th className="px-3 py-2 text-center text-[10px] font-bold text-teal-primary border-b border-dark-border bg-teal-bg min-w-[50px]">
+                Total
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.members.map((m, ri) => (
+              <tr
+                key={m.id}
+                className={ri % 2 === 0 ? "bg-dark-surface" : "bg-dark-alt"}
+              >
+                <td
+                  className={`px-3 py-1.5 border-b border-dark-border border-r sticky left-0 z-10 ${ri % 2 === 0 ? "bg-dark-surface" : "bg-dark-alt"}`}
+                >
+                  <span className="font-semibold text-gray-100">{m.name}</span>
+                  {m.isManager && (
+                    <span className="ml-1 text-[9px] bg-teal-bg text-teal-primary border border-teal-border px-1.5 rounded-full font-bold">
+                      MGR
+                    </span>
+                  )}
                 </td>
                 {Array.from({ length: days }, (_, i) => (
                   <td
                     key={i + 1}
-                    style={{
-                      padding: "8px 2px",
-                      textAlign: "center",
-                      color: C.green,
-                      fontSize: 12,
-                      fontWeight: 600,
-                      borderTop: `2px solid ${C.border}`,
-                    }}
+                    className="px-0.5 py-1 text-center border-b border-dark-border"
                   >
-                    {getDayTotal(i + 1) > 0
-                      ? getDayTotal(i + 1).toFixed(1)
-                      : ""}
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.5"
+                      value={(data.mealChart[m.id] || {})[i + 1] ?? ""}
+                      onChange={(e) => setMeal(m.id, i + 1, e.target.value)}
+                      className="w-9 text-center text-xs bg-dark-raised border border-dark-border rounded focus:outline-none focus:border-teal-primary text-gray-100 py-1"
+                    />
                   </td>
                 ))}
-                <td
-                  style={{
-                    padding: "8px 12px",
-                    textAlign: "center",
-                    fontWeight: 700,
-                    color: C.teal,
-                    background: C.tealBg,
-                    borderTop: `2px solid ${C.border}`,
-                  }}
-                >
-                  {grandTotal.toFixed(1)}
+                <td className="px-3 py-1.5 text-center font-bold text-teal-primary bg-teal-bg border-b border-dark-border">
+                  {getMemberTotal(m.id).toFixed(1)}
                 </td>
               </tr>
-            </tfoot>
-          </table>
-        </div>
-      )}
+            ))}
+            {/* Day totals row */}
+            <tr className="bg-dark-header">
+              <td className="px-3 py-2 text-[10px] font-bold text-gray-500 uppercase border-t-2 border-dark-border sticky left-0 bg-dark-header z-10">
+                Day Total
+              </td>
+              {Array.from({ length: days }, (_, i) => (
+                <td
+                  key={i + 1}
+                  className="px-1 py-2 text-center text-xs text-green-400 font-semibold border-t-2 border-dark-border"
+                >
+                  {getDayTotal(i + 1) > 0 ? getDayTotal(i + 1).toFixed(1) : ""}
+                </td>
+              ))}
+              <td className="px-3 py-2 text-center font-bold text-teal-primary bg-teal-bg border-t-2 border-dark-border">
+                {grandTotal.toFixed(1)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
-
-const stickyTh = {
-  padding: "11px 14px",
-  textAlign: "left",
-  position: "sticky",
-  left: 0,
-  zIndex: 2,
-  background: C.header,
-  borderBottom: `1px solid ${C.border}`,
-  borderRight: `1px solid ${C.border}`,
-  color: C.textLight,
-  fontSize: 11,
-  fontWeight: 700,
-  textTransform: "uppercase",
-  letterSpacing: 0.5,
-  minWidth: 120,
-};
-const stickyTd = {
-  padding: "8px 14px",
-  position: "sticky",
-  left: 0,
-  zIndex: 1,
-  borderBottom: `1px solid ${C.border}`,
-  borderRight: `1px solid ${C.border}`,
-  whiteSpace: "nowrap",
-  minWidth: 120,
-};
-const dayTh = {
-  padding: "11px 4px",
-  textAlign: "center",
-  fontSize: 11,
-  fontWeight: 700,
-  color: C.textLight,
-  borderBottom: `1px solid ${C.border}`,
-  minWidth: 42,
-};
-const mealInput = {
-  width: 38,
-  padding: "4px 2px",
-  textAlign: "center",
-  border: `1px solid ${C.border}`,
-  borderRadius: 5,
-  fontSize: 12,
-  color: C.text,
-  background: C.raised,
-  fontFamily: font,
-  outline: "none",
-};

@@ -1,4 +1,4 @@
-import { C, font, StatBox } from "./UI";
+import { StatBox } from "./UI";
 
 export default function Header({
   mealRate,
@@ -12,109 +12,74 @@ export default function Header({
   onCloseMonth,
 }) {
   return (
-    <div
-      style={{
-        background: C.header,
-        borderBottom: `1px solid ${C.border}`,
-        padding: "16px 24px",
-      }}
-    >
-      <div style={{ maxWidth: 980, margin: "0 auto" }}>
-        {/* Title row */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: 12,
-          }}
-        >
+    <div className="bg-dark-header border-b border-dark-border px-4 py-4">
+      <div className="max-w-5xl mx-auto">
+        {/* Title + buttons */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
           <div>
-            <h1
-              style={{
-                margin: 0,
-                fontSize: 22,
-                fontWeight: 700,
-                color: C.teal,
-                fontFamily: font,
-                letterSpacing: 0.3,
-              }}
-            >
+            <h1 className="text-xl sm:text-2xl font-bold text-teal-primary tracking-tight">
               🏠 Mess Bazar
             </h1>
-            <p
-              style={{
-                margin: "4px 0 0",
-                fontSize: 13,
-                color: C.textLight,
-                fontFamily: font,
-              }}
-            >
-              Month: <strong style={{ color: C.textMid }}>{monthLabel}</strong>
+            <p className="text-xs text-gray-500 mt-0.5">
+              Month: <strong className="text-gray-400">{monthLabel}</strong>
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <button onClick={onExport} style={hBtn(C.tealDim)}>
+          {/* Action buttons */}
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={onExport}
+              className="flex-1 sm:flex-none text-xs font-semibold px-3 py-2 rounded-lg bg-teal-dim hover:bg-teal-primary text-white transition-colors"
+            >
               ⬇ Export
             </button>
-            <label style={{ ...hBtn("#1e4040"), cursor: "pointer" }}>
+            <label className="flex-1 sm:flex-none text-xs font-semibold px-3 py-2 rounded-lg bg-dark-raised border border-dark-border text-gray-300 cursor-pointer hover:border-teal-border transition-colors text-center">
               ⬆ Import
               <input
                 type="file"
                 accept=".json"
                 onChange={onImport}
-                style={{ display: "none" }}
+                className="hidden"
               />
             </label>
-            <button onClick={onCloseMonth} style={hBtn("#7f1d1d", "#ef4444")}>
-              🔒 Close Month & Reset
+            <button
+              onClick={onCloseMonth}
+              className="flex-1 sm:flex-none text-xs font-semibold px-3 py-2 rounded-lg bg-red-900 hover:bg-red-700 text-red-300 border border-red-800 transition-colors"
+            >
+              🔒 Close Month
             </button>
           </div>
         </div>
 
-        {/* Stats bar */}
-        <div
-          style={{ display: "flex", gap: 10, marginTop: 16, flexWrap: "wrap" }}
-        >
-          <StatBox label="Members" value={activeMembers} color={C.text} />
+        {/* Stats — horizontal scroll on mobile */}
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          <StatBox
+            label="Members"
+            value={activeMembers}
+            color="text-gray-100"
+          />
           <StatBox
             label="Bazar Total"
-            value={`৳ ${totalBazarAmount.toFixed(0)}`}
-            color={C.teal}
+            value={`৳${totalBazarAmount.toFixed(0)}`}
+            color="text-teal-primary"
           />
           <StatBox
             label="Total Meals"
             value={totalMeals.toFixed(1)}
-            color={C.text}
+            color="text-gray-100"
           />
           <StatBox
             label="Meal Rate"
-            value={`৳ ${mealRate.toFixed(2)}`}
-            color={C.green}
+            value={`৳${mealRate.toFixed(2)}`}
+            color="text-green-400"
           />
           <StatBox
             label="Fixed/Person"
-            value={`৳ ${fixedPerPerson.toFixed(0)}`}
-            color={C.amber}
+            value={`৳${fixedPerPerson.toFixed(0)}`}
+            color="text-yellow-400"
           />
         </div>
       </div>
     </div>
   );
-}
-
-function hBtn(bg, border) {
-  return {
-    background: bg,
-    color: "#fff",
-    border: `1px solid ${border || bg}`,
-    borderRadius: 8,
-    padding: "8px 14px",
-    fontSize: 13,
-    fontWeight: 600,
-    fontFamily: font,
-    cursor: "pointer",
-  };
 }

@@ -6,14 +6,14 @@ import Header from "./components/Header";
 import MealTab from "./components/MealTab";
 import MembersTab from "./components/MembersTab";
 import SettlementTab from "./components/SettlementTab";
-import { C, ConfirmModal, font, Toast } from "./components/UI";
+import { ConfirmModal, Toast } from "./components/UI";
 import { defaultData, loadData, saveData, STORAGE_KEY } from "./constants";
 
 const TABS = [
   { id: "members", label: "Members", icon: "👥" },
-  { id: "bazar", label: "Bazar List", icon: "🛒" },
-  { id: "meal", label: "Meal Chart", icon: "🍽️" },
-  { id: "fixed", label: "Fixed Cost", icon: "📦" },
+  { id: "bazar", label: "Bazar", icon: "🛒" },
+  { id: "meal", label: "Meals", icon: "🍽️" },
+  { id: "fixed", label: "Fixed", icon: "📦" },
   { id: "settlement", label: "Settlement", icon: "💰" },
 ];
 
@@ -34,7 +34,6 @@ export default function App() {
     setTimeout(() => setToast(null), 3000);
   };
 
-  // ── Export ────────────────────────────────────────────────────────────────────
   const exportData = (label) => {
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
@@ -47,7 +46,6 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
-  // ── Import ────────────────────────────────────────────────────────────────────
   const importData = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -57,14 +55,13 @@ export default function App() {
         setData(JSON.parse(ev.target.result));
         showToast("Data imported successfully.");
       } catch {
-        showToast("Invalid file. Please use an exported backup.", "error");
+        showToast("Invalid file.", "error");
       }
     };
     reader.readAsText(file);
     e.target.value = "";
   };
 
-  // ── Close Month & Full Reset ──────────────────────────────────────────────────
   const confirmReset = () => {
     exportData(data.monthLabel);
     try {
@@ -78,7 +75,7 @@ export default function App() {
     });
     setActiveTab("members");
     setShowReset(false);
-    showToast("Month closed. Backup saved. Fresh data started.");
+    showToast("Month closed. Backup saved. Fresh start!");
   };
 
   // ── Calculations ──────────────────────────────────────────────────────────────
@@ -124,18 +121,8 @@ export default function App() {
     };
   });
 
-  // ── Render ────────────────────────────────────────────────────────────────────
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: C.bg,
-        fontFamily: font,
-        color: C.text,
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <div className="min-h-screen bg-dark-bg text-gray-100 font-sans flex flex-col">
       <Header
         mealRate={mealRate}
         totalBazarAmount={totalBazarAmount}
@@ -148,61 +135,29 @@ export default function App() {
         onCloseMonth={() => setShowReset(true)}
       />
 
-      {/* Tab bar */}
-      <div
-        style={{
-          background: C.surface,
-          borderBottom: `1px solid ${C.border}`,
-          position: "sticky",
-          top: 0,
-          zIndex: 100,
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 980,
-            margin: "0 auto",
-            display: "flex",
-            overflowX: "auto",
-          }}
-        >
+      {/* Tab bar — scrollable on mobile */}
+      <div className="bg-dark-surface border-b border-dark-border sticky top-0 z-40">
+        <div className="max-w-5xl mx-auto flex overflow-x-auto">
           {TABS.map((t) => (
             <button
               key={t.id}
               onClick={() => setActiveTab(t.id)}
-              style={{
-                padding: "13px 20px",
-                border: "none",
-                background: "none",
-                cursor: "pointer",
-                color: activeTab === t.id ? C.teal : C.textMid,
-                borderBottom:
+              className={`flex-shrink-0 px-4 py-3 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap
+                ${
                   activeTab === t.id
-                    ? `2px solid ${C.teal}`
-                    : "2px solid transparent",
-                fontFamily: font,
-                fontSize: 14,
-                fontWeight: activeTab === t.id ? 700 : 500,
-                whiteSpace: "nowrap",
-                transition: "all 0.15s",
-              }}
+                    ? "text-teal-primary border-teal-primary"
+                    : "text-gray-500 border-transparent hover:text-gray-300"
+                }`}
             >
-              {t.icon} {t.label}
+              <span className="mr-1">{t.icon}</span>
+              {t.label}
             </button>
           ))}
         </div>
       </div>
 
       {/* Page content */}
-      <div
-        style={{
-          maxWidth: 980,
-          margin: "0 auto",
-          padding: "24px 16px",
-          flex: 1,
-          width: "100%",
-        }}
-      >
+      <div className="max-w-5xl mx-auto w-full px-4 py-5 flex-1">
         {activeTab === "members" && (
           <MembersTab data={data} update={update} showToast={showToast} />
         )}
@@ -238,7 +193,7 @@ export default function App() {
         open={showReset}
         danger
         title="Close Month & Reset All Data"
-        message={`This will auto-export a backup of "${data.monthLabel}", then permanently clear everything for a fresh new month. This cannot be undone.`}
+        message={`This will auto-export a backup of "${data.monthLabel}", then permanently clear everything for a fresh new month.`}
         onConfirm={confirmReset}
         onCancel={() => setShowReset(false)}
       />

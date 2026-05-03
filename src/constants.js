@@ -1,4 +1,4 @@
-export const STORAGE_KEY = "mess_bazar_v3";
+export const STORAGE_KEY = "mess_bazar_v4";
 
 const now = new Date();
 export const defaultData = {
