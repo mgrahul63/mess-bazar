@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ConfirmModal from "./DeleteConfirm";
 import {
   Badge,
   InfoBox,
@@ -18,6 +19,7 @@ export default function MembersTab({ data, update, showToast }) {
   const [deposit, setDeposit] = useState("");
   const [isManager, setIsManager] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
 
   const reset = () => {
     setName("");
@@ -135,7 +137,7 @@ export default function MembersTab({ data, update, showToast }) {
       </PageCard>
 
       {/* Table — role & actions hidden on mobile to save space */}
-       <h5 className="text-teal-200">Member List</h5>
+      <h5 className="text-teal-200">Member List</h5>
       <Table>
         <thead>
           <tr>
@@ -171,7 +173,7 @@ export default function MembersTab({ data, update, showToast }) {
 
               <Td>
                 <Badge
-                  label={m.isManager ? "Mngr" : "Mbr"}
+                  label={m.isManager ? "Manager" : "Member"}
                   color={m.isManager ? "teal" : "gray"}
                 />
               </Td>
@@ -182,16 +184,23 @@ export default function MembersTab({ data, update, showToast }) {
                 <div className="flex gap-1">
                   <button
                     onClick={() => startEdit(m)}
-                    className="text-[10px] bg-dark-raised border border-dark-border text-gray-400 hover:text-gray-200 px-2 py-1 rounded-md transition-colors"
+                    className="text-[8px] bg-dark-raised border border-dark-border text-gray-400 hover:text-gray-200 px-2 py-1 rounded-md transition-colors"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => remove(m.id)}
-                    className="text-[10px] bg-red-900/40 border border-red-700/30 text-red-400 hover:bg-red-800/50 px-2 py-1 rounded-md transition-colors"
+                    onClick={() => setDeleteId(m.id)}
+                    className="text-[8px] bg-red-900/40 border border-red-700/30 text-red-400 hover:bg-red-800/50 px-2 py-1 rounded-md"
                   >
                     Del
                   </button>
+
+                  <ConfirmModal
+                    isOpen={deleteId !== null}
+                    onClose={() => setDeleteId(null)}
+                    onConfirm={() => remove(m.id)}
+                    message="Delete this record permanently?"
+                  />
                 </div>
               </Td>
             </tr>

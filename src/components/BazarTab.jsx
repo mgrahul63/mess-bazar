@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { today } from "../constants";
+import ConfirmModal from "./DeleteConfirm";
 import {
   Badge,
   InfoBox,
@@ -25,6 +26,7 @@ const empty = () => ({
 export default function BazarTab({ data, update, showToast }) {
   const [form, setForm] = useState(empty());
   const [editId, setEditId] = useState(null);
+  const [deleteId, setDeleteId] = useState(null);
 
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const reset = () => {
@@ -159,7 +161,7 @@ export default function BazarTab({ data, update, showToast }) {
       </PageCard>
 
       {/* Table — description & date hidden on mobile */}
-       <h5 className="text-teal-200">Bazar List</h5>
+      <h5 className="text-teal-200">Bazar List</h5>
       <Table>
         <thead>
           <tr>
@@ -222,16 +224,24 @@ export default function BazarTab({ data, update, showToast }) {
                   <div className="flex gap-1">
                     <button
                       onClick={() => startEdit(b)}
-                      className="text-[10px] bg-dark-raised border border-dark-border text-gray-400 hover:text-gray-200 px-2 py-1 rounded-md transition-colors"
+                      className="text-[8px] bg-dark-raised border border-dark-border text-gray-400 hover:text-gray-200 px-2 py-1 rounded-md transition-colors"
                     >
                       Edit
                     </button>
+
                     <button
-                      onClick={() => remove(b.id)}
-                      className="text-[10px] bg-red-900/40 border border-red-700/30 text-red-400 hover:bg-red-800/50 px-2 py-1 rounded-md transition-colors"
+                      onClick={() => setDeleteId(b.id)}
+                      className="text-[8px] bg-red-900/40 border border-red-700/30 text-red-400 hover:bg-red-800/50 px-2 py-1 rounded-md transition-colors"
                     >
                       Del
                     </button>
+
+                    <ConfirmModal
+                      isOpen={deleteId !== null}
+                      onClose={() => setDeleteId(null)}
+                      onConfirm={() => remove(b.id)}
+                      message="Delete this record permanently?"
+                    />
                   </div>
                 </Td>
               </tr>
