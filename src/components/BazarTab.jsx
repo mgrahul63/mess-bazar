@@ -6,9 +6,12 @@ import {
   Input,
   Label,
   PageCard,
-  ResponsiveTable,
   SectionTitle,
   Select,
+  Table,
+  Td,
+  TFoot,
+  Th,
 } from "./UI";
 
 const empty = () => ({
@@ -78,66 +81,6 @@ export default function BazarTab({ data, update, showToast }) {
     .filter((b) => b.type === "member")
     .reduce((s, b) => s + Number(b.amount || 0), 0);
 
-  const tableRows = data.bazarList.map((b, i) => {
-    const person = data.members.find((m) => m.id === b.personId);
-    return {
-      cells: [
-        <span className="text-gray-500">{i + 1}</span>,
-        <span className="text-gray-400 text-xs">{b.date}</span>,
-        <strong className="text-gray-100">{person?.name || "—"}</strong>,
-        <span className="text-gray-400">{b.description || "—"}</span>,
-        <Badge
-          label={b.type === "manager" ? "Manager" : "Member"}
-          color={b.type === "manager" ? "teal" : "green"}
-        />,
-        <span className="text-teal-primary font-semibold">
-          ৳ {Number(b.amount).toLocaleString()}
-        </span>,
-        <div className="flex gap-2">
-          <button onClick={() => startEdit(b)} className="btn-sm-ghost">
-            Edit
-          </button>
-          <button onClick={() => remove(b.id)} className="btn-sm-red">
-            Remove
-          </button>
-        </div>,
-      ],
-      mobileContent: (
-        <div>
-          <div className="flex items-start justify-between mb-1">
-            <div>
-              <strong className="text-gray-100">{person?.name || "—"}</strong>
-              <span className="text-gray-500 text-xs ml-2">{b.date}</span>
-            </div>
-            <span className="text-teal-primary font-bold text-base">
-              ৳ {Number(b.amount).toLocaleString()}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 mb-2">
-            <Badge
-              label={b.type === "manager" ? "Manager" : "Member"}
-              color={b.type === "manager" ? "teal" : "green"}
-            />
-            {b.description && (
-              <span className="text-gray-400 text-xs">{b.description}</span>
-            )}
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => startEdit(b)}
-              className="btn-sm-ghost flex-1"
-            >
-              Edit
-            </button>
-            <button onClick={() => remove(b.id)} className="btn-sm-red flex-1">
-              Remove
-            </button>
-          </div>
-        </div>
-      ),
-    };
-  });
-
   return (
     <div>
       <SectionTitle
@@ -147,14 +90,13 @@ export default function BazarTab({ data, update, showToast }) {
       />
 
       <InfoBox color="amber">
-        <strong>Manager Purchase</strong> → Bazar total only (meal rate). Not in
-        member deposit.
+        <strong>Manager Purchase</strong> → Counted in Bazar Total for meal rate
+        only. Not added to member deposit.
         <br />
-        <strong>Member Purchase</strong> → Bazar total AND added to member's
-        deposit in settlement.
+        <strong>Member Purchase</strong> → Counted in Bazar Total AND added to
+        that member's deposit in settlement.
       </InfoBox>
 
-      {/* Form */}
       <PageCard>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
@@ -164,7 +106,7 @@ export default function BazarTab({ data, update, showToast }) {
               {data.members.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.name}
-                  {m.isManager ? " (Manager)" : ""}
+                  {m.isManager ? " (Mgr)" : ""}
                 </option>
               ))}
             </Select>
@@ -172,8 +114,8 @@ export default function BazarTab({ data, update, showToast }) {
           <div>
             <Label required>Purchase Type</Label>
             <Select value={form.type} onChange={set("type")}>
-              <option value="manager">Manager Purchase — Group expense</option>
-              <option value="member">Member Purchase — Added to deposit</option>
+              <option value="manager">Manager Purchase</option>
+              <option value="member">Member Purchase</option>
             </Select>
           </div>
           <div>
@@ -198,11 +140,17 @@ export default function BazarTab({ data, update, showToast }) {
             <Input type="date" value={form.date} onChange={set("date")} />
           </div>
           <div className="flex items-end gap-2">
-            <button onClick={save} className="btn-teal flex-1">
+            <button
+              onClick={save}
+              className="flex-1 bg-teal-dim hover:bg-teal-primary text-white text-sm font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
               {editId ? "Update" : "Add Entry"}
             </button>
             {editId && (
-              <button onClick={reset} className="btn-ghost">
+              <button
+                onClick={reset}
+                className="border border-dark-border text-gray-400 text-sm font-semibold py-2 px-4 rounded-lg hover:text-gray-200 transition-colors"
+              >
                 Cancel
               </button>
             )}
@@ -210,35 +158,123 @@ export default function BazarTab({ data, update, showToast }) {
         </div>
       </PageCard>
 
-      {/* Table / Cards */}
-      <ResponsiveTable
-        headers={[
-          "#",
-          "Date",
-          "Person",
-          "Description",
-          "Type",
-          "Amount (৳)",
-          "Actions",
-        ]}
-        rows={tableRows}
-        emptyMsg="No bazar entries yet."
-      />
+      {/* Table — description & date hidden on mobile */}
+      <Table>
+        <thead>
+          <tr>
+            <Th className="w-8">#</Th>
+            <Th>Person</Th>
+            <Th hiddenOnMobile>Date</Th>
+            <Th hiddenOnMobile>Description</Th>
+            <Th>Type</Th>
+            <Th>Amount (৳)</Th>
+            <Th>Act.</Th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.bazarList.length === 0 && (
+            <tr>
+              <td
+                colSpan={7}
+                className="text-center text-gray-500 text-sm py-8"
+              >
+                No bazar entries yet.
+              </td>
+            </tr>
+          )}
+          {data.bazarList.map((b, i) => {
+            const person = data.members.find((m) => m.id === b.personId);
+            return (
+              <tr
+                key={b.id}
+                className={i % 2 === 0 ? "bg-dark-surface" : "bg-dark-alt"}
+              >
+                <Td className="text-gray-500 text-xs">{i + 1}</Td>
+                <Td>
+                  <div className="font-semibold text-gray-100 truncate">
+                    {person?.name || "—"}
+                  </div>
+                  {/* Show date & desc inline on mobile */}
+                  <div className="sm:hidden text-xs text-gray-500 mt-0.5 truncate">
+                    {b.date} {b.description ? `· ${b.description}` : ""}
+                  </div>
+                </Td>
+                <Td hiddenOnMobile className="text-gray-400 text-xs">
+                  {b.date}
+                </Td>
+                <Td
+                  hiddenOnMobile
+                  className="text-gray-400 truncate max-w-[120px]"
+                >
+                  {b.description || "—"}
+                </Td>
+                <Td>
+                  <Badge
+                    label={b.type === "manager" ? "Mgr" : "Mem"}
+                    color={b.type === "manager" ? "teal" : "green"}
+                  />
+                </Td>
+                <Td className="text-teal-primary font-semibold">
+                  ৳{Number(b.amount).toLocaleString()}
+                </Td>
+                <Td>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => startEdit(b)}
+                      className="text-xs bg-dark-raised border border-dark-border text-gray-400 hover:text-gray-200 px-2 py-1 rounded-md transition-colors"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => remove(b.id)}
+                      className="text-xs bg-red-900/40 border border-red-700/30 text-red-400 hover:bg-red-800/50 px-2 py-1 rounded-md transition-colors"
+                    >
+                      Del
+                    </button>
+                  </div>
+                </Td>
+              </tr>
+            );
+          })}
+        </tbody>
+        <TFoot>
+          <tr>
+            <td
+              colSpan={5}
+              className="px-3 py-2.5 text-xs font-bold text-gray-400 hidden sm:table-cell"
+            >
+              Total Bazar Amount
+            </td>
+            <td
+              colSpan={3}
+              className="px-3 py-2.5 text-xs font-bold text-gray-400 sm:hidden"
+            >
+              Total
+            </td>
+            <td className="px-2 sm:px-3 py-2.5 text-teal-primary font-bold">
+              ৳{total.toLocaleString()}
+            </td>
+            <td />
+          </tr>
+        </TFoot>
+      </Table>
 
-      {/* Totals */}
+      {/* Summary row */}
       {data.bazarList.length > 0 && (
-        <div className="grid grid-cols-3 gap-2 mt-3">
+        <div className="grid grid-cols-2 gap-2 mt-3">
           {[
-            ["Total", total, "text-teal-primary"],
-            ["Manager", managerTotal, "text-blue-400"],
-            ["Member", memberTotal, "text-green-400"],
+            ["Manager Purchases", managerTotal, "text-blue-400"],
+            ["Member Purchases", memberTotal, "text-green-400"],
           ].map(([l, v, c]) => (
-            <div key={l} className="card text-center">
+            <div
+              key={l}
+              className="bg-dark-surface border border-dark-border rounded-xl p-3"
+            >
               <div className="text-[10px] text-gray-500 uppercase font-semibold">
                 {l}
               </div>
-              <div className={`font-bold text-sm mt-1 ${c}`}>
-                ৳ {v.toLocaleString()}
+              <div className={`font-bold text-base mt-1 ${c}`}>
+                ৳{v.toLocaleString()}
               </div>
             </div>
           ))}

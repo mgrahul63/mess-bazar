@@ -5,9 +5,12 @@ import {
   Input,
   Label,
   PageCard,
-  ResponsiveTable,
   SectionTitle,
   Select,
+  Table,
+  Td,
+  TFoot,
+  Th,
 } from "./UI";
 
 export default function MembersTab({ data, update, showToast }) {
@@ -75,52 +78,6 @@ export default function MembersTab({ data, update, showToast }) {
     0,
   );
 
-  const tableRows = data.members.map((m, i) => ({
-    cells: [
-      <span className="text-gray-500">{i + 1}</span>,
-      <strong className="text-gray-100">{m.name}</strong>,
-      <Badge
-        label={m.isManager ? "Manager" : "Member"}
-        color={m.isManager ? "teal" : "gray"}
-      />,
-      <span className="text-teal-primary font-semibold">
-        ৳ {Number(m.deposit || 0).toLocaleString()}
-      </span>,
-      <div className="flex gap-2">
-        <button onClick={() => startEdit(m)} className="btn-sm-ghost">
-          Edit
-        </button>
-        <button onClick={() => remove(m.id)} className="btn-sm-red">
-          Remove
-        </button>
-      </div>,
-    ],
-    mobileContent: (
-      <div>
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <strong className="text-gray-100">{m.name}</strong>
-            <Badge
-              label={m.isManager ? "Manager" : "Member"}
-              color={m.isManager ? "teal" : "gray"}
-            />
-          </div>
-          <span className="text-teal-primary font-bold text-base">
-            ৳ {Number(m.deposit || 0).toLocaleString()}
-          </span>
-        </div>
-        <div className="flex gap-2 mt-2">
-          <button onClick={() => startEdit(m)} className="btn-sm-ghost flex-1">
-            Edit
-          </button>
-          <button onClick={() => remove(m.id)} className="btn-sm-red flex-1">
-            Remove
-          </button>
-        </div>
-      </div>
-    ),
-  }));
-
   return (
     <div>
       <SectionTitle
@@ -129,7 +86,6 @@ export default function MembersTab({ data, update, showToast }) {
         sub="Add all members and their initial cash deposit for this month."
       />
 
-      {/* Form */}
       <PageCard>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
@@ -160,11 +116,17 @@ export default function MembersTab({ data, update, showToast }) {
             </Select>
           </div>
           <div className="flex items-end gap-2">
-            <button onClick={save} className="btn-teal flex-1">
+            <button
+              onClick={save}
+              className="flex-1 bg-teal-dim hover:bg-teal-primary text-white text-sm font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
               {editId ? "Update" : "Add Member"}
             </button>
             {editId && (
-              <button onClick={reset} className="btn-ghost">
+              <button
+                onClick={reset}
+                className="border border-dark-border text-gray-400 text-sm font-semibold py-2 px-4 rounded-lg hover:text-gray-200 transition-colors"
+              >
                 Cancel
               </button>
             )}
@@ -172,28 +134,99 @@ export default function MembersTab({ data, update, showToast }) {
         </div>
       </PageCard>
 
-      {/* Table / Cards */}
-      <ResponsiveTable
-        headers={["#", "Name", "Role", "Cash Deposit (৳)", "Actions"]}
-        rows={tableRows}
-        emptyMsg="No members added yet."
-      />
-
-      {/* Total */}
-      {data.members.length > 0 && (
-        <div className="card mt-3 flex justify-between items-center">
-          <span className="text-sm font-semibold text-gray-400">
-            Total Cash Deposits
-          </span>
-          <span className="text-teal-primary font-bold text-lg">
-            ৳ {totalDeposit.toLocaleString()}
-          </span>
-        </div>
-      )}
+      {/* Table — role & actions hidden on mobile to save space */}
+      <Table>
+        <thead>
+          <tr>
+            <Th className="w-8">#</Th>
+            <Th>Name</Th>
+            <Th hiddenOnMobile>Role</Th>
+            <Th>Deposit (৳)</Th>
+            <Th>Actions</Th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.members.length === 0 && (
+            <tr>
+              <td
+                colSpan={5}
+                className="text-center text-gray-500 text-sm py-8"
+              >
+                No members added yet.
+              </td>
+            </tr>
+          )}
+          {data.members.map((m, i) => (
+            <tr
+              key={m.id}
+              className={i % 2 === 0 ? "bg-dark-surface" : "bg-dark-alt"}
+            >
+              <Td className="text-gray-500 text-xs">{i + 1}</Td>
+              <Td>
+                <div className="font-semibold text-gray-100 truncate">
+                  {m.name}
+                </div>
+                {/* Show role badge inline on mobile since role column is hidden */}
+                <div className="sm:hidden mt-0.5">
+                  <Badge
+                    label={m.isManager ? "Manager" : "Member"}
+                    color={m.isManager ? "teal" : "gray"}
+                  />
+                </div>
+              </Td>
+              <Td hiddenOnMobile>
+                <Badge
+                  label={m.isManager ? "Manager" : "Member"}
+                  color={m.isManager ? "teal" : "gray"}
+                />
+              </Td>
+              <Td className="text-teal-primary font-semibold">
+                ৳{Number(m.deposit || 0).toLocaleString()}
+              </Td>
+              <Td>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => startEdit(m)}
+                    className="text-xs bg-dark-raised border border-dark-border text-gray-400 hover:text-gray-200 px-2 py-1 rounded-md transition-colors"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => remove(m.id)}
+                    className="text-xs bg-red-900/40 border border-red-700/30 text-red-400 hover:bg-red-800/50 px-2 py-1 rounded-md transition-colors"
+                  >
+                    Del
+                  </button>
+                </div>
+              </Td>
+            </tr>
+          ))}
+        </tbody>
+        <TFoot>
+          <tr>
+            <td
+              colSpan={3}
+              className="px-3 py-2.5 text-xs font-bold text-gray-400 hidden sm:table-cell"
+            >
+              Total Cash Deposits
+            </td>
+            <td
+              colSpan={3}
+              className="px-3 py-2.5 text-xs font-bold text-gray-400 sm:hidden"
+            >
+              Total
+            </td>
+            <td className="px-2 sm:px-3 py-2.5 text-teal-primary font-bold">
+              ৳{totalDeposit.toLocaleString()}
+            </td>
+            <td />
+          </tr>
+        </TFoot>
+      </Table>
 
       <InfoBox color="teal" className="mt-3">
         ℹ️ Cash deposit is money given directly to the group fund. Bazar
-        purchases by members are tracked separately in the Bazar List tab.
+        purchases by members are tracked separately.
       </InfoBox>
     </div>
   );

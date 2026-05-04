@@ -1,24 +1,30 @@
-// ─── SHARED UI COMPONENTS (Tailwind CSS) ──────────────────────────────────────
+// ─── SHARED UI COMPONENTS (Tailwind CSS only) ─────────────────────────────────
 
 export function SectionTitle({ icon, title, sub }) {
   return (
     <div className="mb-4">
-      <h2 className="section-title flex items-center gap-2">
+      <h2 className="flex items-center gap-2 text-base sm:text-lg font-bold text-gray-100">
         <span>{icon}</span>
         <span>{title}</span>
       </h2>
-      {sub && <p className="section-sub">{sub}</p>}
+      {sub && <p className="text-xs text-gray-500 mt-1 ml-7">{sub}</p>}
     </div>
   );
 }
 
 export function PageCard({ children, className = "" }) {
-  return <div className={`card mb-4 ${className}`}>{children}</div>;
+  return (
+    <div
+      className={`bg-dark-surface border border-dark-border rounded-xl p-4 mb-4 ${className}`}
+    >
+      {children}
+    </div>
+  );
 }
 
 export function Label({ children, required }) {
   return (
-    <label className="col-label">
+    <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">
       {children}
       {required && <span className="text-red-400 ml-1">*</span>}
     </label>
@@ -26,12 +32,20 @@ export function Label({ children, required }) {
 }
 
 export function Input({ className = "", ...props }) {
-  return <input {...props} className={`field ${className}`} />;
+  return (
+    <input
+      {...props}
+      className={`w-full bg-dark-raised border border-dark-border rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-teal-primary transition-colors ${className}`}
+    />
+  );
 }
 
 export function Select({ children, className = "", ...props }) {
   return (
-    <select {...props} className={`field ${className}`}>
+    <select
+      {...props}
+      className={`w-full bg-dark-raised border border-dark-border rounded-lg px-3 py-2 text-sm text-gray-100 focus:outline-none focus:border-teal-primary transition-colors ${className}`}
+    >
       {children}
     </select>
   );
@@ -39,14 +53,14 @@ export function Select({ children, className = "", ...props }) {
 
 export function InfoBox({ children, color = "teal" }) {
   const map = {
-    teal: "bg-teal-bg border border-teal-border text-teal-primary",
-    amber: "bg-yellow-900/30 border border-yellow-700/40 text-yellow-400",
-    red: "bg-red-900/30 border border-red-700/40 text-red-400",
-    green: "bg-green-900/30 border border-green-700/40 text-green-400",
+    teal: "bg-teal-bg border-teal-border text-teal-primary",
+    amber: "bg-yellow-900/20 border-yellow-700/30 text-yellow-400",
+    red: "bg-red-900/20 border-red-700/30 text-red-400",
+    green: "bg-green-900/20 border-green-700/30 text-green-400",
   };
   return (
     <div
-      className={`${map[color] || map.teal} rounded-lg p-3 text-xs leading-relaxed mb-4`}
+      className={`border rounded-lg p-3 text-xs leading-relaxed mb-4 ${map[color] || map.teal}`}
     >
       {children}
     </div>
@@ -55,15 +69,15 @@ export function InfoBox({ children, color = "teal" }) {
 
 export function Badge({ label, color = "teal" }) {
   const map = {
-    teal: "bg-teal-bg text-teal-primary border border-teal-border",
-    green: "bg-green-900/40 text-green-400 border border-green-700/40",
-    red: "bg-red-900/40 text-red-400 border border-red-700/40",
-    amber: "bg-yellow-900/40 text-yellow-400 border border-yellow-700/40",
-    gray: "bg-dark-raised text-gray-400 border border-dark-border",
+    teal: "bg-teal-bg text-teal-primary border-teal-border",
+    green: "bg-green-900/30 text-green-400 border-green-700/30",
+    red: "bg-red-900/30 text-red-400 border-red-700/30",
+    amber: "bg-yellow-900/30 text-yellow-400 border-yellow-700/30",
+    gray: "bg-dark-raised text-gray-400 border-dark-border",
   };
   return (
     <span
-      className={`${map[color] || map.teal} text-xs font-semibold px-2 py-0.5 rounded-full`}
+      className={`border text-xs font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${map[color] || map.teal}`}
     >
       {label}
     </span>
@@ -72,11 +86,11 @@ export function Badge({ label, color = "teal" }) {
 
 export function StatBox({ label, value, color = "text-teal-primary" }) {
   return (
-    <div className="bg-dark-surface border border-dark-border rounded-xl p-3 min-w-[90px]">
+    <div className="bg-dark-surface border border-dark-border rounded-xl p-3 min-w-[88px] flex-shrink-0">
       <div className="text-[10px] text-gray-500 font-semibold uppercase tracking-wide">
         {label}
       </div>
-      <div className={`text-lg font-bold mt-1 ${color}`}>{value}</div>
+      <div className={`text-base font-bold mt-1 ${color}`}>{value}</div>
     </div>
   );
 }
@@ -110,7 +124,8 @@ export function ConfirmModal({
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
       <div
-        className={`bg-dark-surface rounded-2xl p-6 w-full max-w-sm border ${danger ? "border-red-700" : "border-dark-border"} shadow-2xl`}
+        className={`bg-dark-surface rounded-2xl p-6 w-full max-w-sm border shadow-2xl
+        ${danger ? "border-red-700" : "border-dark-border"}`}
       >
         <h3
           className={`text-base font-bold mb-2 ${danger ? "text-red-400" : "text-teal-primary"}`}
@@ -119,12 +134,16 @@ export function ConfirmModal({
         </h3>
         <p className="text-sm text-gray-400 leading-relaxed mb-6">{message}</p>
         <div className="flex gap-3 justify-end">
-          <button onClick={onCancel} className="btn-ghost">
+          <button
+            onClick={onCancel}
+            className="border border-dark-border text-gray-400 text-sm font-semibold px-4 py-2 rounded-lg hover:text-gray-200 transition-colors"
+          >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className={danger ? "btn-red" : "btn-teal"}
+            className={`text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors
+              ${danger ? "bg-red-700 hover:bg-red-600" : "bg-teal-dim hover:bg-teal-primary"}`}
           >
             Confirm & Reset
           </button>
@@ -134,62 +153,41 @@ export function ConfirmModal({
   );
 }
 
-// ─── RESPONSIVE TABLE ─────────────────────────────────────────────────────────
-// On mobile: renders as cards. On desktop: renders as table.
-export function ResponsiveTable({ headers, rows, emptyMsg = "No data yet." }) {
-  if (rows.length === 0) {
-    return (
-      <div className="card text-center text-gray-500 text-sm py-10">
-        {emptyMsg}
-      </div>
-    );
-  }
+// ─── TABLE COMPONENTS ─────────────────────────────────────────────────────────
+// hiddenOnMobile={true} hides that column on small screens using Tailwind
 
+export function Table({ children }) {
   return (
-    <>
-      {/* Desktop table — hidden on mobile */}
-      <div className="hidden sm:block overflow-x-auto rounded-xl border border-dark-border">
-        <table className="w-full border-collapse text-sm">
-          <thead>
-            <tr>
-              {headers.map((h) => (
-                <th
-                  key={h}
-                  className="px-4 py-3 text-left text-[11px] font-bold text-gray-500 uppercase tracking-wide bg-dark-header border-b border-dark-border whitespace-nowrap"
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, ri) => (
-              <tr
-                key={ri}
-                className={ri % 2 === 0 ? "bg-dark-surface" : "bg-dark-alt"}
-              >
-                {row.cells.map((cell, ci) => (
-                  <td
-                    key={ci}
-                    className="px-4 py-3 border-b border-dark-border text-gray-200"
-                  >
-                    {cell}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Mobile cards — shown only on mobile */}
-      <div className="sm:hidden flex flex-col gap-3">
-        {rows.map((row, ri) => (
-          <div key={ri} className={`card ${row.highlight || ""}`}>
-            {row.mobileContent}
-          </div>
-        ))}
-      </div>
-    </>
+    <div className="w-full rounded-xl border border-dark-border overflow-hidden">
+      <table className="w-full border-collapse text-sm table-fixed">
+        {children}
+      </table>
+    </div>
   );
+}
+
+export function Th({ children, hiddenOnMobile = false, className = "" }) {
+  return (
+    <th
+      className={`px-2 sm:px-3 py-2.5 text-left text-[10px] font-bold text-gray-500 uppercase tracking-wide bg-dark-header border-b border-dark-border
+      ${hiddenOnMobile ? "hidden sm:table-cell" : ""} ${className}`}
+    >
+      {children}
+    </th>
+  );
+}
+
+export function Td({ children, hiddenOnMobile = false, className = "" }) {
+  return (
+    <td
+      className={`px-2 sm:px-3 py-2.5 border-b border-dark-border text-gray-200 text-xs sm:text-sm
+      ${hiddenOnMobile ? "hidden sm:table-cell" : ""} ${className}`}
+    >
+      {children}
+    </td>
+  );
+}
+
+export function TFoot({ children }) {
+  return <tfoot className="bg-dark-header">{children}</tfoot>;
 }

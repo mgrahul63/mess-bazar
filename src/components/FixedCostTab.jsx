@@ -4,8 +4,11 @@ import {
   Input,
   Label,
   PageCard,
-  ResponsiveTable,
   SectionTitle,
+  Table,
+  Td,
+  TFoot,
+  Th,
 } from "./UI";
 
 export default function FixedCostTab({
@@ -70,42 +73,6 @@ export default function FixedCostTab({
     showToast("Removed.");
   };
 
-  const tableRows = (data.fixedCosts || []).map((f, i) => ({
-    cells: [
-      <span className="text-gray-500">{i + 1}</span>,
-      <strong className="text-gray-100">{f.name}</strong>,
-      <span className="text-yellow-400 font-semibold">
-        ৳ {Number(f.amount).toLocaleString()}
-      </span>,
-      <div className="flex gap-2">
-        <button onClick={() => startEdit(f)} className="btn-sm-ghost">
-          Edit
-        </button>
-        <button onClick={() => remove(f.id)} className="btn-sm-red">
-          Remove
-        </button>
-      </div>,
-    ],
-    mobileContent: (
-      <div>
-        <div className="flex justify-between items-center mb-2">
-          <strong className="text-gray-100">{f.name}</strong>
-          <span className="text-yellow-400 font-bold text-base">
-            ৳ {Number(f.amount).toLocaleString()}
-          </span>
-        </div>
-        <div className="flex gap-2">
-          <button onClick={() => startEdit(f)} className="btn-sm-ghost flex-1">
-            Edit
-          </button>
-          <button onClick={() => remove(f.id)} className="btn-sm-red flex-1">
-            Remove
-          </button>
-        </div>
-      </div>
-    ),
-  }));
-
   return (
     <div>
       <SectionTitle
@@ -118,10 +85,10 @@ export default function FixedCostTab({
         ⚠️ Fixed costs are <strong>separate from Bazar Total</strong> — they do
         not affect the meal rate.
         <br />
-        Formula: <strong>Total Fixed ÷ Members = Per Person Share</strong>
+        Formula:{" "}
+        <strong>Total Fixed Cost ÷ Number of Members = Per Person Share</strong>
       </InfoBox>
 
-      {/* Form */}
       <PageCard>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
@@ -142,11 +109,17 @@ export default function FixedCostTab({
             />
           </div>
           <div className="sm:col-span-2 flex gap-2">
-            <button onClick={save} className="btn-teal flex-1">
+            <button
+              onClick={save}
+              className="flex-1 bg-teal-dim hover:bg-teal-primary text-white text-sm font-semibold py-2 px-4 rounded-lg transition-colors"
+            >
               {editId ? "Update" : "Add Cost"}
             </button>
             {editId && (
-              <button onClick={reset} className="btn-ghost">
+              <button
+                onClick={reset}
+                className="border border-dark-border text-gray-400 text-sm font-semibold py-2 px-4 rounded-lg hover:text-gray-200 transition-colors"
+              >
                 Cancel
               </button>
             )}
@@ -154,26 +127,82 @@ export default function FixedCostTab({
         </div>
       </PageCard>
 
-      {/* Table / Cards */}
-      <ResponsiveTable
-        headers={["#", "Cost Name", "Amount (৳)", "Actions"]}
-        rows={tableRows}
-        emptyMsg="No fixed costs added."
-      />
+      <Table>
+        <thead>
+          <tr>
+            <Th className="w-8">#</Th>
+            <Th>Cost Name</Th>
+            <Th>Amount (৳)</Th>
+            <Th>Actions</Th>
+          </tr>
+        </thead>
+        <tbody>
+          {(data.fixedCosts || []).length === 0 && (
+            <tr>
+              <td
+                colSpan={4}
+                className="text-center text-gray-500 text-sm py-8"
+              >
+                No fixed costs added.
+              </td>
+            </tr>
+          )}
+          {(data.fixedCosts || []).map((f, i) => (
+            <tr
+              key={f.id}
+              className={i % 2 === 0 ? "bg-dark-surface" : "bg-dark-alt"}
+            >
+              <Td className="text-gray-500 text-xs">{i + 1}</Td>
+              <Td className="font-semibold text-gray-100">{f.name}</Td>
+              <Td className="text-yellow-400 font-semibold">
+                ৳{Number(f.amount).toLocaleString()}
+              </Td>
+              <Td>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => startEdit(f)}
+                    className="text-xs bg-dark-raised border border-dark-border text-gray-400 hover:text-gray-200 px-2 py-1 rounded-md transition-colors"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => remove(f.id)}
+                    className="text-xs bg-red-900/40 border border-red-700/30 text-red-400 hover:bg-red-800/50 px-2 py-1 rounded-md transition-colors"
+                  >
+                    Del
+                  </button>
+                </div>
+              </Td>
+            </tr>
+          ))}
+        </tbody>
+        <TFoot>
+          <tr>
+            <td
+              colSpan={2}
+              className="px-3 py-2.5 text-xs font-bold text-gray-400"
+            >
+              Total Fixed Cost
+            </td>
+            <td className="px-2 sm:px-3 py-2.5 text-yellow-400 font-bold">
+              ৳{totalFixedCost.toLocaleString()}
+            </td>
+            <td />
+          </tr>
+        </TFoot>
+      </Table>
 
-      {/* Summary */}
       {(data.fixedCosts || []).length > 0 && (
         <div className="grid grid-cols-3 gap-2 mt-3">
           {[
             ["Members", activeMembers, "text-teal-primary"],
-            [
-              "Total Fixed",
-              `৳ ${totalFixedCost.toFixed(0)}`,
-              "text-yellow-400",
-            ],
-            ["Per Person", `৳ ${fixedPerPerson.toFixed(2)}`, "text-red-400"],
+            ["Total Fixed", `৳${totalFixedCost.toFixed(0)}`, "text-yellow-400"],
+            ["Per Person", `৳${fixedPerPerson.toFixed(2)}`, "text-red-400"],
           ].map(([l, v, c]) => (
-            <div key={l} className="card text-center">
+            <div
+              key={l}
+              className="bg-dark-surface border border-dark-border rounded-xl p-3 text-center"
+            >
               <div className="text-[10px] text-gray-500 uppercase font-semibold">
                 {l}
               </div>
