@@ -159,6 +159,7 @@ export default function BazarTab({ data, update, showToast }) {
       </PageCard>
 
       {/* Table — description & date hidden on mobile */}
+       <h5 className="text-teal-200">Bazar List</h5>
       <Table>
         <thead>
           <tr>

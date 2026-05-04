@@ -135,6 +135,7 @@ export default function MembersTab({ data, update, showToast }) {
       </PageCard>
 
       {/* Table — role & actions hidden on mobile to save space */}
+       <h5 className="text-teal-200">Member List</h5>
       <Table>
         <thead>
           <tr>
