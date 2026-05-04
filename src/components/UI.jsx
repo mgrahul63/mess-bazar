@@ -169,7 +169,7 @@ export function Table({ children }) {
 export function Th({ children, hiddenOnMobile = false, className = "" }) {
   return (
     <th
-      className={`px-2 sm:px-3 py-2.5 text-left text-[10px] font-bold text-gray-500 uppercase tracking-wide bg-dark-header border-b border-dark-border
+      className={`px-2 sm:px-3 py-2 text-left text-[10px] font-bold text-gray-500 uppercase tracking-wide bg-dark-header border-b border-dark-border
       ${hiddenOnMobile ? "hidden sm:table-cell" : ""} ${className}`}
     >
       {children}

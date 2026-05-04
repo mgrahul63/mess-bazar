@@ -167,8 +167,8 @@ export default function BazarTab({ data, update, showToast }) {
             <Th hiddenOnMobile>Date</Th>
             <Th hiddenOnMobile>Description</Th>
             <Th>Type</Th>
-            <Th>Amount (৳)</Th>
-            <Th>Act.</Th>
+            <Th>Amount</Th>
+            <Th>Action</Th>
           </tr>
         </thead>
         <tbody>
@@ -195,8 +195,8 @@ export default function BazarTab({ data, update, showToast }) {
                     {person?.name || "—"}
                   </div>
                   {/* Show date & desc inline on mobile */}
-                  <div className="sm:hidden text-xs text-gray-500 mt-0.5 truncate">
-                    {b.date} {b.description ? `· ${b.description}` : ""}
+                  <div className="sm:hidden text-[8px] text-gray-500 mt-0.5 truncate">
+                    {b.date}
                   </div>
                 </Td>
                 <Td hiddenOnMobile className="text-gray-400 text-xs">
@@ -210,7 +210,7 @@ export default function BazarTab({ data, update, showToast }) {
                 </Td>
                 <Td>
                   <Badge
-                    label={b.type === "manager" ? "Mgr" : "Mem"}
+                    label={b.type === "manager" ? "Manager" : "Member"}
                     color={b.type === "manager" ? "teal" : "green"}
                   />
                 </Td>
@@ -221,13 +221,13 @@ export default function BazarTab({ data, update, showToast }) {
                   <div className="flex gap-1">
                     <button
                       onClick={() => startEdit(b)}
-                      className="text-xs bg-dark-raised border border-dark-border text-gray-400 hover:text-gray-200 px-2 py-1 rounded-md transition-colors"
+                      className="text-[10px] bg-dark-raised border border-dark-border text-gray-400 hover:text-gray-200 px-2 py-1 rounded-md transition-colors"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => remove(b.id)}
-                      className="text-xs bg-red-900/40 border border-red-700/30 text-red-400 hover:bg-red-800/50 px-2 py-1 rounded-md transition-colors"
+                      className="text-[10px] bg-red-900/40 border border-red-700/30 text-red-400 hover:bg-red-800/50 px-2 py-1 rounded-md transition-colors"
                     >
                       Del
                     </button>

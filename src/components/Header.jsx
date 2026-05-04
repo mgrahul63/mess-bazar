@@ -51,8 +51,7 @@ export default function Header({
           </div>
         </div>
 
-        {/* Stats — horizontal scroll on mobile */}
-        <div className="flex gap-2 overflow-x-auto pb-1">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
           <StatBox
             label="Members"
             value={activeMembers}

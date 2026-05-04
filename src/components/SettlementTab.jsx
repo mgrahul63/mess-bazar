@@ -64,14 +64,26 @@ export default function SettlementTab({
         <thead>
           <tr>
             <Th>Name</Th>
-            <Th hiddenOnMobile>Cash Dep.</Th>
+            <Th>
+              <span className="hidden sm:inline">Cash Dep.</span>
+              <span className="sm:hidden !text-[8px] capitalize">
+                {" "}
+                Cash Dep. & Bazar
+              </span>
+            </Th>
             <Th hiddenOnMobile>Bazar</Th>
-            <Th>Deposit</Th>
-            <Th hiddenOnMobile>Meal Cost</Th>
+            <Th hiddenOnMobile>Deposit</Th>
+            <Th>
+              <span className="hidden sm:inline">Meal Cost</span>
+              <span className="sm:hidden !text-[8px] capitalize">
+                {" "}
+                Meal Cost & Fixed Cost
+              </span>
+            </Th>
             <Th hiddenOnMobile>Fixed</Th>
             <Th>Expense</Th>
             <Th>Balance</Th>
-            <Th>Status</Th>
+            <Th hiddenOnMobile>Status</Th>
           </tr>
         </thead>
         <tbody>
@@ -104,14 +116,29 @@ export default function SettlementTab({
                   {s.memberMeals.toFixed(1)} meals
                 </div>
               </Td>
-              <Td hiddenOnMobile className="text-gray-400">
-                ৳{s.cashDeposit.toFixed(0)}
+              <Td className="text-gray-400 ">
+                <div className="text-[8px] sm:text-sm">
+                  ৳{s.cashDeposit.toFixed(0)}
+                  <span className="sm:hidden">
+                    {" + "}৳{s.bazarPurchases.toFixed(0)}
+                  </span>
+                </div>
+                <span className="sm:hidden">= {s.totalDeposit.toFixed(0)}</span>
               </Td>
               <Td hiddenOnMobile className="text-gray-400">
                 ৳{s.bazarPurchases.toFixed(0)}
               </Td>
               <Td className="text-teal-primary font-semibold">
-                ৳{s.totalDeposit.toFixed(0)}
+                <div className="text-[8px] sm:text-sm">
+                  <span className="sm:hidden">
+                    {s.mealCost.toFixed(2)}
+                    <p className="ps-2">+</p>
+                    {fixedPerPerson.toFixed(2)}
+                  </span>
+                </div>
+                <span className="hidden sm:inline">
+                  ৳{s.totalDeposit.toFixed(0)}
+                </span>
               </Td>
               <Td hiddenOnMobile className="text-gray-400">
                 ৳{s.mealCost.toFixed(2)}
@@ -125,9 +152,15 @@ export default function SettlementTab({
                   className={`font-bold text-sm ${s.balance >= 0 ? "text-green-400" : "text-red-400"}`}
                 >
                   ৳{Math.abs(s.balance).toFixed(2)}
+                  <div className="sm:hidden">
+                    <Badge
+                      label={s.balance >= 0 ? "✅ Gets" : "❌ Pays"}
+                      color={s.balance >= 0 ? "green" : "red"}
+                    />
+                  </div>
                 </span>
               </Td>
-              <Td>
+              <Td hiddenOnMobile>
                 <Badge
                   label={s.balance >= 0 ? "✅ Gets" : "❌ Pays"}
                   color={s.balance >= 0 ? "green" : "red"}

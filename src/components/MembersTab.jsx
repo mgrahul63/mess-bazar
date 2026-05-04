@@ -140,7 +140,7 @@ export default function MembersTab({ data, update, showToast }) {
           <tr>
             <Th className="w-8">#</Th>
             <Th>Name</Th>
-            <Th hiddenOnMobile>Role</Th>
+            <Th>Role</Th>
             <Th>Deposit (৳)</Th>
             <Th>Actions</Th>
           </tr>
@@ -166,17 +166,11 @@ export default function MembersTab({ data, update, showToast }) {
                 <div className="font-semibold text-gray-100 truncate">
                   {m.name}
                 </div>
-                {/* Show role badge inline on mobile since role column is hidden */}
-                <div className="sm:hidden mt-0.5">
-                  <Badge
-                    label={m.isManager ? "Manager" : "Member"}
-                    color={m.isManager ? "teal" : "gray"}
-                  />
-                </div>
               </Td>
-              <Td hiddenOnMobile>
+
+              <Td>
                 <Badge
-                  label={m.isManager ? "Manager" : "Member"}
+                  label={m.isManager ? "Mngr" : "Mbr"}
                   color={m.isManager ? "teal" : "gray"}
                 />
               </Td>
@@ -187,13 +181,13 @@ export default function MembersTab({ data, update, showToast }) {
                 <div className="flex gap-1">
                   <button
                     onClick={() => startEdit(m)}
-                    className="text-xs bg-dark-raised border border-dark-border text-gray-400 hover:text-gray-200 px-2 py-1 rounded-md transition-colors"
+                    className="text-[10px] bg-dark-raised border border-dark-border text-gray-400 hover:text-gray-200 px-2 py-1 rounded-md transition-colors"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => remove(m.id)}
-                    className="text-xs bg-red-900/40 border border-red-700/30 text-red-400 hover:bg-red-800/50 px-2 py-1 rounded-md transition-colors"
+                    className="text-[10px] bg-red-900/40 border border-red-700/30 text-red-400 hover:bg-red-800/50 px-2 py-1 rounded-md transition-colors"
                   >
                     Del
                   </button>
